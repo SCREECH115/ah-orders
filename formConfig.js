@@ -43,7 +43,8 @@ const formConfig = {
       "options": [
       ],
       "type": 'input',
-      "style": "column"
+      "style": "column",
+      "lastQuestion": true
    },
    "townSelected": {
       "qeustion": "W jaki sposób możemy Ci pomóc?",
@@ -110,7 +111,6 @@ const formConfig = {
          { "text": "Nie ma pośpiechu", "next": "townShopping_6", value: "noAsap" },
          { "text": "Wybierz dzień", "next": "calendar", value: "calendar" },
       ],
-      "type": 'input',
       "display": "flex",
       "style": "column",
       "lastQuestion": true
@@ -124,7 +124,6 @@ const formConfig = {
          { "text": "Sprawy związane z meldunkiem", "next": "checkin" },
          { "text": "Inne", "next": "otherQueries", "value": "townService" },
       ],
-      "type": 'input',
       "display": "flex",
       "style": "column"
    },
@@ -184,7 +183,6 @@ const formConfig = {
          { "text": "Data", "next": "townRepickup_3", value: "calendar" },
          { "text": "Nie wiem", "next": "townRepickup_3" },
       ],
-      "type": 'input',
       "display": "flex",
       "style": "column"
    },
