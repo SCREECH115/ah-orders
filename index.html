@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formularz Kaskadowy</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="script.js"></script>
+    <script defer src="script.js" type="module"></script>
+    <script defer src="formConfig.js" type="module"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
@@ -23,11 +24,12 @@
       </div>
       <button class="welcome-bar__button" id="welcome-bar-button">Zapisz</button>
       
-      <div id="firstChoiceButtons" style="display: none;"></div>
-      <h2 id="secondQuestion" class="choices__question"></h2>
+      <div id="firstChoiceButtons"></div>
       <div id="secondChoiceButtons"></div>
-      <h2 id="thirdQuestion" class="choices__question" style="display:none;"></h2>
-      <div id="thirdChoiceButtons" style="display:none;"></div>
+
+      <div id="dynamicForm">
+         <!-- Cascade form -->
+      </div>
    </main>
 </body>
 </html>

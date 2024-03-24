@@ -1,66 +1,16 @@
 AOS.init();
+import formConfig from './formConfig.js';
 
-const subjectObject = {
-   "Online": {
-      "Czego dotyczy twoja potrzeba?": ["Zakupy online", "Wyszukanie produktu", "Rezerwacja", "Reklamacja", "Research wakacji", "Research fachowców", "Inne"]
-   },
-   "W terenie": {
-      "W jakim mieście?": {
-         "Warszawa": {
-            "Zakupy": {
-               question: "W jakim sklepie należy wykonać zakupy? Możesz wpisać jego nazwę lub konretny adres.",
-               showInput: true,
-               nextQuestion: {
-                  question: "Co nleży kupić? Wypisz wszystkie produkty, które potrzebujesz.",
-                  showInput: true,
-                  nextQuestion: {
-                     question: "Gdzie należy je dostarczyć?",
-                     showInput: true,
-                     nextQuestion: {
-                        question: "Na kiedy ich potrzebujesz?",
-                        showInput: false,
-                        nextQuestion: ["Dziś", "Jutro", "Wybierz dzień", "Dowolnie", "Jak najszybciej", "Nie ma pośpiechu"]
-                     }
-                  }
-               }
-            },
-            "Sprawy urzędowe": {
-               uestion: "Co to jest za sprawa?",
-               showInput: false,
-               nextQuestion: ["Tematy związane z pojazdem", "Sprawy związane z meldunkiem", "Inne"]
-            },
-            "Odbiór zamówienia": {
-               question: "W jakim sklepie należy odebrać zamówienie?",
-               showInput: true,
-               nextQuestion: {
-                  question: "Podaj szczególy zamówienia - numer zamówienia, nr. telefonu, czy jest opłacone......",
-                  showInput: true,
-                  nextQuestion: {
-                     question: "Gdzie należy je dostarczyć?",
-                     showInput: true,
-                     nextQuestion: {
-                        question: "Na kiedy ich potrzebujesz?",
-                        showInput: true,
-                        nextQuestion: false,
-                     }
-                  }
-               }
-            },
-         }
-      }
-   },
-   "Inne": {}
-}
-
-const answers = {};
- 
 const welcomeButton = document.querySelector('#welcome-bar-button');
 const welcomeBar = document.querySelector('.welcome-bar');
 const inputName = document.querySelector(".form__field");
+const answers = {};
 let name = '';
 
 inputName.addEventListener('input', function() {
-   if (inputName.value.length > 0) {
+   inputName.value = inputName.value.charAt(0).toUpperCase() + inputName.value.slice(1).toLowerCase();
+
+   if (inputName.value.length > 2) {
       welcomeButton.style.opacity = '1';
       welcomeButton.style.visibility = 'visible';
       return;
@@ -68,6 +18,7 @@ inputName.addEventListener('input', function() {
 
    welcomeButton.style.opacity = '0';
    welcomeButton.style.visibility = 'hidden';
+
    return;
 });
 
@@ -77,14 +28,78 @@ welcomeButton.addEventListener('click', function() {
    answers["Name"] = name;
    welcomeBar.innerHTML = `
       <h1 class="welcome-bar__title welcome-bar__title-name" data-aos="fade-right">Cześć ${name}, miło Cię widzieć!</h1> 
-      <h2 class="welcome-bar__title welcome-bar__title-desc" data-aos="fade-left">Czy sprawa będzie online czy w terenie?</h2>`;
+      <h2 class="welcome-bar__title welcome-bar__title-desc" data-aos="fade-left" data-aos-delay="250">Na początek, wybierz rodzaj zgłoszenia!</h2>`;
    welcomeButton.style.display = 'none';
-   document.querySelector('#firstChoiceButtons').style.display = 'block';
+   generateButtons();
 });
 
-window.onload = function() {
-   let firstChoiceButtons = document.getElementById("firstChoiceButtons");
-   let secondChoiceButtons = document.getElementById("secondChoiceButtons");
+const generateButtons = () => {
+   const formElement = document.getElementById('dynamicForm');
+   let currentStep = 'start';
+   const answers = [];
+ 
+   function createFormStep(step) {
+      const stepData = formConfig[step];
+      const formGroup = document.createElement('div');
+      formGroup.setAttribute('data-aos', 'fade-up');
+      formGroup.setAttribute('data-aos-delay', '500');
+      formGroup.classList.add('form__group-questions');
+      formGroup.style.display = stepData.display;
+      formGroup.classList.add(`form__group-questions--${stepData.style}`)
+
+      const questionLabel = document.createElement('label');
+      questionLabel.classList.add('questions');
+      questionLabel.textContent = stepData.question;
+      formGroup.appendChild(questionLabel);
+      
+      if (stepData.type === 'input') {
+         const input = document.createElement('input');
+         input.type = 'text';
+         input.classList.add('form__field-question');
+         input.name = step;
+         input.required = true;
+         formGroup.appendChild(input);
+   
+         if (stepData.lastQuestion) { 
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.classList.add('button--question');
+            button.textContent = 'Podsumowanie zgłoszenia';
+            formGroup.appendChild(button);
+      
+            button.onclick = () => handleOptionSelect('finish', input);
+         }
+      }
+      
+      stepData.options.forEach(option => {
+         const button = document.createElement('button');
+         button.type = 'button';
+         button.classList.add('button--question');
+         button.textContent = option.text;
+         button.onclick = () => handleOptionSelect(option.next);
+         formGroup.appendChild(button);
+      });
+ 
+      formElement.innerHTML = '';
+      formElement.appendChild(formGroup);
+
+      if (step !== 'start') {
+         welcomeBar.style.transform = 'translateY(-100%)';
+         welcomeBar.style.opacity = 0.3;
+         document.querySelector('.welcome-bar__title-name ').style.marginBottom = '20px';
+         document.querySelector('.welcome-bar__title-name ').style.marginTop = '0';
+         document.querySelector('.welcome-bar__title-desc').style.display = 'none';
+      }
+   }
+ 
+   function handleOptionSelect(nextStep, answer) {
+      if (!nextStep) {
+         // Finish
+         return;
+      }
+      currentStep = nextStep;
+      createFormStep(nextStep);
+   }
+ 
+   createFormStep(currentStep);
 };
- 
- 
